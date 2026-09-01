@@ -116,10 +116,11 @@
               />
             </hlm-input-group-addon>
           </hlm-input-group>
+          @if (form.password().invalid() && form.password().touched()) {
           <p class="text-[11px] sm:text-xs text-destructive min-h-4">
-            @if (form.password().invalid() && form.password().touched()) { {{
-            form.password().errors()[0]?.message }} }
+            {{ form.password().errors()[0]?.message }}
           </p>
+          }
         </hlm-field>
 
         <button
