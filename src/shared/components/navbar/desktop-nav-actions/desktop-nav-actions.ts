@@ -8,11 +8,11 @@ import { Avatar } from '../avtaar/avtaar';
   providers: [provideIcons({ lucideHeart, lucideLuggage })],
   selector: 'app-desktop-nav-actions',
   styleUrl: './desktop-nav-actions.css',
-  template: ` <div class="hidden md:flex items-center justify-end gap-3 lg:gap-5">
+  template: ` <div class="hidden md:flex items-center justify-end gap-3 lg:gap-5 cursor-pointer">
     <!-- My Trips -->
     <a
       routerLink="/mytrip"
-      class="inline-flex items-center text-gray-200 hover:text-red-500 transition-colors font-medium group gap-2 border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
+      class="inline-flex items-center text-gray-200  hover:text-red-500 transition-colors font-medium group gap-2 border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
     >
       <div class="bg-white/20 rounded-full w-8 h-8 p-1 flex items-center justify-center shrink-0">
         <ng-icon
@@ -30,7 +30,7 @@ import { Avatar } from '../avtaar/avtaar';
     <!-- Wishlist -->
     <a
       routerLink="wishlist"
-      class="inline-flex items-center gap-2 text-gray-200 hover:text-red-500 transition-colors font-medium group border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
+      class="inline-flex items-center gap-2 cursor-pointer text-gray-200 hover:text-red-500 transition-colors font-medium group border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
     >
       <div class="bg-white/20 rounded-full w-8 h-8 p-1 flex items-center justify-center shrink-0">
         <ng-icon

@@ -3,7 +3,7 @@ import { LoginFormType, SignupFormType } from './model/AuthTypes';
 
 @Service()
 export class Auth {
-  isLoggedIn = signal<boolean>(false);
+  isLoggedIn = signal<boolean>(true);
   showLoginModal = signal<boolean>(false);
   showSignUpModal = signal<boolean>(false);
   showForgotPasswordModal = signal<boolean>(false);
