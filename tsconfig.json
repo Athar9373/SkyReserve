@@ -15,7 +15,15 @@
       "@spartan-ng/helm/button": ["./src/shared/button/src/index.ts"],
       "@spartan-ng/helm/utils": ["./src/shared/utils/src/index.ts"],
       "@spartan-ng/helm/avatar": ["./src/shared/avatar/src/index.ts"],
-      "@spartan-ng/helm/dropdown-menu": ["./src/shared/dropdown-menu/src/index.ts"]
+      "@spartan-ng/helm/dropdown-menu": [
+        "./src/shared/dropdown-menu/src/index.ts"
+      ],
+      "@spartan-ng/helm/input-group": ["./src/shared/input-group/src/index.ts"],
+      "@spartan-ng/helm/input": ["./src/shared/input/src/index.ts"],
+      "@spartan-ng/helm/textarea": ["./src/shared/textarea/src/index.ts"],
+      "@spartan-ng/helm/field": ["./src/shared/field/src/index.ts"],
+      "@spartan-ng/helm/label": ["./src/shared/label/src/index.ts"],
+      "@spartan-ng/helm/separator": ["./src/shared/separator/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

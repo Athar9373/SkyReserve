@@ -6,7 +6,7 @@
     class="max-w-7xl mx-auto w-[95%] sm:w-[90%] lg:w-[70%] h-14 sm:h-15 flex justify-between items-center px-3 sm:px-4 bg-black/40 my-1 rounded-xl backdrop-blur-md"
   >
     <!-- Logo Section -->
-    <a routerLink="">
+    <a routerLink="/">
       <div class="h-9 sm:h-12 flex items-center">
         <img
           ngSrc="/assets/logo.png"
@@ -20,21 +20,27 @@
     </a>
 
     <!-- Desktop Navigation Actions -->
-    <app-desktop-nav-actions [isLoggedIn]="isLoggedIn" [(showLoginModel)]="showLoginModel" />
+    <app-desktop-nav-actions
+      [isLoggedIn]="isLoggedIn()"
+      [(showLoginModel)]="showLoginModel"
+    />
 
     <!-- Mobile Controls (Avatar/Login + Hamburger toggle) -->
     <div class="flex items-center gap-2 md:hidden">
-      @if (isLoggedIn) {
-        <spartan-avatar></spartan-avatar>
+      @if (isLoggedIn()) {
+      <spartan-avatar></spartan-avatar>
       }
 
       <button
         type="button"
         (click)="toggleMobileMenu()"
-        class="p-1.5 text-white hover:text-gray-300 focus:outline-none"
+        class="p-1.5 text-white hover:text-gray-300 focus:outline-none cursor-pointer"
         aria-label="Toggle navigation menu"
       >
-        <ng-icon [name]="isMobileMenuOpen() ? 'lucideX' : 'lucideMenu'" size="24" />
+        <ng-icon
+          [name]="isMobileMenuOpen() ? 'lucideX' : 'lucideMenu'"
+          size="24"
+        />
       </button>
     </div>
   </div>
@@ -43,6 +49,6 @@
   <app-mobile-nav-actions
     [(showLoginModel)]="showLoginModel"
     [(isMobileMenuOpen)]="isMobileMenuOpen"
-    [isLoggedIn]="isLoggedIn"
+    [isLoggedIn]="isLoggedIn()"
   />
 </nav>

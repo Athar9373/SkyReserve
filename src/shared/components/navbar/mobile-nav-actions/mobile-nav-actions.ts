@@ -1,12 +1,14 @@
-import { Component, input, model, signal } from '@angular/core';
-import { NgIcon } from '@ng-icons/core';
+import { Component, input, model } from "@angular/core";
+import { RouterLink } from "@angular/router";
+import { NgIcon, provideIcons } from "@ng-icons/core";
+import { lucideHeart, lucideLuggage } from "@ng-icons/lucide";
 
 @Component({
-  imports: [NgIcon],
-  selector: 'app-mobile-nav-actions',
-  styleUrl: './mobile-nav-actions.css',
+  imports: [NgIcon, RouterLink],
+  providers: [provideIcons({ lucideHeart, lucideLuggage })],
+  selector: "app-mobile-nav-actions",
+  styleUrl: "./mobile-nav-actions.css",
   template: `
-    <!-- Mobile Dropdown Menu -->
     @if (isMobileMenuOpen()) {
       <div
         class="md:hidden max-w-7xl mx-auto w-[95%] bg-black/90 rounded-xl mt-1 p-4 flex flex-col gap-4 border border-white/10 shadow-xl backdrop-blur-md"
@@ -32,7 +34,7 @@ import { NgIcon } from '@ng-icons/core';
         </a>
 
         <a
-          routerLink="wishlist"
+          routerLink="/wishlist"
           (click)="closeMobileMenu()"
           class="flex items-center gap-3 text-white hover:text-red-500 transition-colors p-2 rounded-lg hover:bg-white/10"
         >
@@ -69,10 +71,6 @@ export class MobileNavActions {
   isLoggedIn = input.required<boolean>();
   showLoginModel = model.required<boolean>();
   isMobileMenuOpen = model.required<boolean>();
-
-  toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update((val) => !val);
-  }
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen.set(false);
