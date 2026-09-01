@@ -1,0 +1,69 @@
+import { Component, input, model } from '@angular/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { lucideHeart, lucideLuggage } from '@ng-icons/lucide';
+import { Avatar } from '../avtaar/avtaar';
+
+@Component({
+  imports: [NgIcon, Avatar],
+  providers: [provideIcons({ lucideHeart, lucideLuggage })],
+  selector: 'app-desktop-nav-actions',
+  styleUrl: './desktop-nav-actions.css',
+  template: ` <div class="hidden md:flex items-center justify-end gap-3 lg:gap-5">
+    <!-- My Trips -->
+    <a
+      routerLink="/mytrip"
+      class="inline-flex items-center text-gray-200 hover:text-red-500 transition-colors font-medium group gap-2 border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
+    >
+      <div class="bg-white/20 rounded-full w-8 h-8 p-1 flex items-center justify-center shrink-0">
+        <ng-icon
+          name="lucideLuggage"
+          class="text-gray-700 [&>svg]:fill-yellow-500 [&>svg]:stroke-gray-700"
+          size="20"
+        />
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[12px] text-white font-semibold leading-tight">My Trips</span>
+        <span class="text-[11px] text-white/80 leading-tight">Manage Your Bookings</span>
+      </div>
+    </a>
+
+    <!-- Wishlist -->
+    <a
+      routerLink="wishlist"
+      class="inline-flex items-center gap-2 text-gray-200 hover:text-red-500 transition-colors font-medium group border-r-2 pr-3 lg:pr-5 border-white/20 border-dashed"
+    >
+      <div class="bg-white/20 rounded-full w-8 h-8 p-1 flex items-center justify-center shrink-0">
+        <ng-icon
+          name="lucideHeart"
+          class="text-red-500 [&>svg]:fill-red-500 [&>svg]:stroke-red-500"
+        />
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-[12px] text-white font-semibold leading-tight">Wishlist</span>
+        <span class="text-[11px] text-white/80 leading-tight">Save favourites</span>
+      </div>
+    </a>
+
+    <!-- Login Button / Avatar -->
+    @if (isLoggedIn()) {
+      <spartan-avatar></spartan-avatar>
+    } @else {
+      <div>
+        <button
+          hlmBtn
+          variant="outline"
+          size="lg"
+          (click)="showLoginModel.set(true)"
+          class="text-white hover:text-white active:scale-[0.9]! text-[12px] flex justify-center items-center cursor-pointer gap-1 px-3 sm:px-4 py-2 sm:py-2.5 border-0 font-bold rounded-xl bg-linear-to-r from-blue-400 to-blue-600 hover:opacity-80 transition-opacity"
+        >
+          Login or Create Account
+        </button>
+      </div>
+    }
+  </div>`,
+})
+export class DesktopNavActions {
+  isLoggedIn = input.required<boolean>();
+  showLoginModel = model.required<boolean>();
+}
