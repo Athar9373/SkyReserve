@@ -174,10 +174,12 @@ export class SignUpDialog {
 
   closeSignupModel() {
     this.showSignupModel.set(false);
+    this.errorMessage.set(null);
   }
 
   onLoginClicked() {
     this.showSignupModel.set(false);
     this.showLoginModal.set(true);
+    this.errorMessage.set(null);
   }
 }
