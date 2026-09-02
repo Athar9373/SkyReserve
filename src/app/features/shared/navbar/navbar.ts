@@ -8,7 +8,7 @@ import {
   lucideMenu,
   lucideX,
 } from "@ng-icons/lucide";
-import { Auth } from "../../../app/core/auth/auth";
+import { Auth } from "../../../core/auth/auth";
 import { Avatar } from "./avtaar/avtaar";
 import { DesktopNavActions } from "./desktop-nav-actions/desktop-nav-actions";
 import { MobileNavActions } from "./mobile-nav-actions/mobile-nav-actions";
