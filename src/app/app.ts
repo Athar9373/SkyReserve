@@ -2,10 +2,11 @@ import { Component, inject, signal } from "@angular/core";
 import { Navbar } from "../shared/components/navbar/navbar";
 import { Auth } from "./core/auth/auth";
 import { LoginDialog } from "./features/auth/login-dialog/login-dialog";
+import { SignUpDialog } from "./features/auth/sign-up-dialog/sign-up-dialog";
 
 @Component({
   selector: "app-root",
-  imports: [Navbar, LoginDialog],
+  imports: [Navbar, LoginDialog, SignUpDialog],
   templateUrl: "./app.html",
   styleUrl: "./app.css",
 })

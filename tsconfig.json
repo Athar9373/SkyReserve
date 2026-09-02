@@ -25,7 +25,8 @@
       "@spartan-ng/helm/label": ["./src/shared/label/src/index.ts"],
       "@spartan-ng/helm/separator": ["./src/shared/separator/src/index.ts"],
       "@spartan-ng/helm/spinner": ["./src/shared/spinner/src/index.ts"],
-      "@spartan-ng/helm/sonner": ["./src/shared/sonner/src/index.ts"]
+      "@spartan-ng/helm/sonner": ["./src/shared/sonner/src/index.ts"],
+      "@spartan-ng/helm/select": ["./src/shared/select/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

@@ -19,28 +19,42 @@ export class Auth {
       const response = await firstValueFrom(
         this.http.post<AuthResponse>(`${this.API_URL}/login`, loginFormData),
       );
-
       console.log("Login successful:", response);
       this.isLoggedIn.set(true);
     } catch (err: unknown) {
-      if (err instanceof HttpErrorResponse) {
-        const backendMsg =
-          err.error?.message || err.error || "Login failed. Please try again.";
-
-        this.errorMessage.set(
-          typeof backendMsg === "string" ? backendMsg : "Invalid credentials.",
-        );
-      } else if (err instanceof Error) {
-        this.errorMessage.set(err.message);
-      } else {
-        this.errorMessage.set("An unexpected error occurred.");
-      }
+      this.handleError(err, "Login failed. Please try again.");
       throw err;
     }
   }
 
-  Logout() {}
-  Signup(SignupformData: SignupFormType) {
-    console.log(SignupformData);
+  async Signup(signupFormData: SignupFormType): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post<AuthResponse>(`${this.API_URL}/signup`, signupFormData),
+      );
+
+      console.log("Signup successful:", response);
+      this.isLoggedIn.set(true);
+    } catch (err: unknown) {
+      this.handleError(err, "Registration failed. Please try again.");
+      throw err;
+    }
+  }
+
+  private handleError(err: unknown, fallbackMessage: string): void {
+    if (err instanceof HttpErrorResponse) {
+      const backendMsg = err.error?.message || err.error || fallbackMessage;
+      this.errorMessage.set(
+        typeof backendMsg === "string" ? backendMsg : fallbackMessage,
+      );
+    } else if (err instanceof Error) {
+      this.errorMessage.set(err.message);
+    } else {
+      this.errorMessage.set("An unexpected error occurred.");
+    }
+  }
+
+  Logout(): void {
+    this.isLoggedIn.set(false);
   }
 }
