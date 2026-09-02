@@ -1,6 +1,9 @@
 <app-navbar />
+<hlm-toaster />
 @if (showLoginModal() && !isLoggedIn()) {
 <app-login-dialog />
 } @if (showSignUpModal() && !isLoggedIn()) {
 <app-sign-up-dialog />
+}@if(showPassModal()){
+<app-reset-password />
 }

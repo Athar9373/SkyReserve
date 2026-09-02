@@ -1,5 +1,10 @@
 import { inject, Service, signal } from "@angular/core";
-import { AuthResponse, LoginFormType, SignupFormType } from "./model/AuthTypes";
+import {
+  AuthResponse,
+  LoginFormType,
+  ResetPasswordType,
+  SignupFormType,
+} from "./model/AuthTypes";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
 
@@ -56,5 +61,20 @@ export class Auth {
 
   Logout(): void {
     this.isLoggedIn.set(false);
+  }
+
+  async ResetPassword(resetData: ResetPasswordType): Promise<void> {
+    try {
+      const response = await firstValueFrom(
+        this.http.post<AuthResponse>(
+          `${this.API_URL}/reset-password`,
+          resetData,
+        ),
+      );
+      console.log("Password reset successful:", response);
+    } catch (err: unknown) {
+      this.handleError(err, "Password reset failed. Please try again.");
+      throw err;
+    }
   }
 }
