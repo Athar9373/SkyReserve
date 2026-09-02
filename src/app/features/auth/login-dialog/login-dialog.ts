@@ -105,15 +105,18 @@ export class LoginDialog {
 
   closeLoginModel(): void {
     this.showLoginModal.set(false);
+    this.errorMessage.set(null);
   }
 
   onSignUpClick(): void {
     this.showLoginModal.set(false);
     this.showSignUpModal.set(true);
+    this.errorMessage.set(null);
   }
 
   onForgotPasswordClick(): void {
     this.showLoginModal.set(false);
+    this.errorMessage.set(null);
     this.showForgotPasswordModal?.set(true);
   }
 }
