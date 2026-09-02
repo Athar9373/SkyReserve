@@ -1,14 +1,20 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { provideIcons, NgIcon } from '@ng-icons/core';
-import { lucideLogOut, lucideSettings, lucideUser } from '@ng-icons/lucide';
-import { HlmAvatarImports } from '@spartan-ng/helm/avatar';
-import { HlmButtonImports } from '@spartan-ng/helm/button';
-import { HlmDropdownMenuImports } from '@spartan-ng/helm/dropdown-menu';
-import { Router, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
+import { provideIcons, NgIcon } from "@ng-icons/core";
+import { lucideLogOut, lucideSettings, lucideUser } from "@ng-icons/lucide";
+import { HlmAvatarImports } from "@spartan-ng/helm/avatar";
+import { HlmButtonImports } from "@spartan-ng/helm/button";
+import { HlmDropdownMenuImports } from "@spartan-ng/helm/dropdown-menu";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
-  selector: 'spartan-avatar',
-  imports: [HlmAvatarImports, HlmDropdownMenuImports, HlmButtonImports, NgIcon, RouterLink],
+  selector: "spartan-avatar",
+  imports: [
+    HlmAvatarImports,
+    HlmDropdownMenuImports,
+    HlmButtonImports,
+    NgIcon,
+    RouterLink,
+  ],
   providers: [provideIcons({ lucideUser, lucideSettings, lucideLogOut })],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -56,14 +62,14 @@ import { Router, RouterLink } from '@angular/router';
 export class Avatar {
   private router = inject(Router);
   Profile() {
-    this.router.navigate(['/profile']);
+    this.router.navigate(["/profile"]);
   }
 
   Settings() {
-    this.router.navigate(['/settings']);
+    this.router.navigate(["/settings"]);
   }
 
   Logout() {
-    this.router.navigate(['/logout']);
+    this.router.navigate(["/logout"]);
   }
 }

@@ -23,7 +23,9 @@
       "@spartan-ng/helm/textarea": ["./src/shared/textarea/src/index.ts"],
       "@spartan-ng/helm/field": ["./src/shared/field/src/index.ts"],
       "@spartan-ng/helm/label": ["./src/shared/label/src/index.ts"],
-      "@spartan-ng/helm/separator": ["./src/shared/separator/src/index.ts"]
+      "@spartan-ng/helm/separator": ["./src/shared/separator/src/index.ts"],
+      "@spartan-ng/helm/spinner": ["./src/shared/spinner/src/index.ts"],
+      "@spartan-ng/helm/sonner": ["./src/shared/sonner/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

@@ -1,1 +1,4 @@
 <app-navbar />
+@if (showLoginModal() && !isLoggedIn()) {
+<app-login-dialog />
+}
