@@ -12,3 +12,8 @@ export interface AuthResponse {
   token?: string;
   message?: string;
 }
+
+export interface ResetPasswordType {
+  email: string;
+  password: string;
+}

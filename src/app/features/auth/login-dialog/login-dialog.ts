@@ -117,6 +117,6 @@ export class LoginDialog {
   onForgotPasswordClick(): void {
     this.showLoginModal.set(false);
     this.errorMessage.set(null);
-    this.showForgotPasswordModal?.set(true);
+    this.showForgotPasswordModal.set(true);
   }
 }
