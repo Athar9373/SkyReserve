@@ -1,4 +1,4 @@
-import { Component, inject, signal } from "@angular/core";
+import { Component, inject, signal, ViewContainerRef } from "@angular/core";
 import { Auth } from "./core/auth/auth";
 import { LoginDialog } from "./features/auth/login-dialog/login-dialog";
 import { SignUpDialog } from "./features/auth/sign-up-dialog/sign-up-dialog";

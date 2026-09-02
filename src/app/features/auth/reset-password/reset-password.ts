@@ -8,6 +8,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import {
+  disabled,
   email,
   form,
   FormField,
@@ -15,7 +16,6 @@ import {
   maxLength,
   minLength,
   pattern,
-  disabled,
   required,
   validate,
 } from "@angular/forms/signals";
@@ -156,39 +156,70 @@ export class ResetPassword implements OnDestroy {
     });
   });
 
-  sendOtp(): void {
+  async sendOtp(): Promise<void> {
     if (this.form.email().invalid()) return;
 
     this.isSendingOtp.set(true);
-
-    // Simulate API call or connect auth service
-    setTimeout(() => {
-      this.isSendingOtp.set(false);
+    try {
+      await this.auth.SendOtp(this._model().email);
       this.otpSent.set(true);
       toast.info("OTP Sent", {
         description: `Verification code sent to ${this._model().email}`,
       });
       this.resetCountdown();
-    }, 800);
+    } catch {
+      toast.error("Failed to Send OTP", {
+        description: this.errorMessage() ?? "Please try again after some time.",
+      });
+    } finally {
+      this.isSendingOtp.set(false);
+    }
   }
 
-  resendOtp(): void {
-    this.sendOtp();
+  async resendOtp(): Promise<void> {
+    await this.sendOtp();
   }
 
-  verifyOtp(): void {
+  async verifyOtp(): Promise<void> {
     if (this.form.otp().invalid()) return;
 
     this.isVerifyingOtp.set(true);
-
-    setTimeout(() => {
-      this.isVerifyingOtp.set(false);
+    try {
+      await this.auth.VerifyOtp({
+        email: this._model().email,
+        otp: this._model().otp,
+      });
       this.otpVerified.set(true);
       this.stopCountdown();
       toast.success("OTP Verified", {
         description: "Code verified. You can now reset your password.",
       });
-    }, 800);
+    } catch {
+      toast.error("OTP Verification Failed", {
+        description: this.errorMessage() ?? "Invalid code. Please try again.",
+      });
+    } finally {
+      this.isVerifyingOtp.set(false);
+    }
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.form().invalid()) return;
+
+    this.isSubmitting.set(true);
+    try {
+      await this.auth.ResetPassword(this._model());
+      toast.success("Password Reset Successful", {
+        description: "Your password has been reset. Please log in.",
+      });
+      this.onLoginClicked();
+    } catch {
+      toast.error("Password Reset Failed", {
+        description: this.errorMessage() ?? "Please try again after some time.",
+      });
+    } finally {
+      this.isSubmitting.set(false);
+    }
   }
 
   toggleShowPassword(): void {
@@ -225,7 +256,7 @@ export class ResetPassword implements OnDestroy {
       if (this.countdown() === 0) {
         this.stopCountdown();
       }
-    }, 1200);
+    }, 1000);
   }
 
   private stopCountdown(): void {
