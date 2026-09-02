@@ -7,3 +7,8 @@ export type SignupFormType = {
 };
 
 export type LoginFormType = { email: string; password: string };
+
+export interface AuthResponse {
+  token?: string;
+  message?: string;
+}
