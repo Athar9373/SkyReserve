@@ -28,7 +28,8 @@
       "@spartan-ng/helm/select": ["./src/shared/select/src/index.ts"],
       "@spartan-ng/helm/dialog": ["./src/shared/dialog/src/index.ts"],
       "@spartan-ng/helm/sonner": ["./src/shared/sonner/src/index.ts"],
-      "@spartan-ng/helm/input-otp": ["./src/shared/input-otp/src/index.ts"]
+      "@spartan-ng/helm/input-otp": ["./src/shared/input-otp/src/index.ts"],
+      "@spartan-ng/helm/skeleton": ["./src/shared/skeleton/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

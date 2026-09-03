@@ -1,10 +1,13 @@
 <hlm-toaster />
-@if (showLoginModal() && !isLoggedIn()) {
+
+@defer (when showLoginModal()) { @if (showLoginModal() && !isLoggedIn()) {
 <app-login-dialog />
-} @if (showSignUpModal() && !isLoggedIn()) {
+} } @placeholder {
+<div></div>
+} @defer (when showSignUpModal()) { @if (showSignUpModal() && !isLoggedIn()) {
 <app-sign-up-dialog />
-}@if(showPassModal()){
-<app-reset-password />
+} } @placeholder {
+<div></div>
 }
 
 <router-outlet></router-outlet>

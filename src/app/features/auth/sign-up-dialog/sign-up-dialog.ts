@@ -4,7 +4,7 @@ import {
   inject,
   signal,
 } from "@angular/core";
-import { Auth } from "../../../core/auth/auth";
+import { AuthService } from "../../../core/auth/auth";
 import {
   email,
   form,
@@ -52,7 +52,7 @@ import { HlmSpinner } from "@spartan-ng/helm/spinner";
 export class SignUpDialog {
   readonly isSubmitting = signal<boolean>(false);
 
-  Auth = inject(Auth);
+  Auth = inject(AuthService);
   showSignupModel = this.Auth.showSignUpModal;
   showPassword = signal<boolean>(false);
   showConfirmPassword = signal<boolean>(false);

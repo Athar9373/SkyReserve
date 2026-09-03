@@ -20,7 +20,7 @@ import { HlmButtonImports } from "@spartan-ng/helm/button";
 import { HlmFieldImports } from "@spartan-ng/helm/field";
 import { HlmInputGroupImports } from "@spartan-ng/helm/input-group";
 import { HlmSpinnerImports } from "@spartan-ng/helm/spinner";
-import { Auth } from "../../../core/auth/auth";
+import { AuthService } from "../../../core/auth/auth";
 
 @Component({
   selector: "app-login-dialog",
@@ -48,7 +48,7 @@ import { Auth } from "../../../core/auth/auth";
   host: { class: "block" },
 })
 export class LoginDialog {
-  private readonly auth = inject(Auth);
+  private readonly auth = inject(AuthService);
   errorMessage = this.auth.errorMessage;
 
   readonly showLoginModal = this.auth.showLoginModal;

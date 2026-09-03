@@ -3,7 +3,7 @@
   [class.-translate-y-full]="isHidden()"
 >
   <div
-    class="max-w-7xl mx-auto w-[95%] sm:w-[90%] lg:w-[70%] h-14 sm:h-15 flex justify-between items-center px-3 sm:px-4 bg-black/40 my-1 rounded-xl backdrop-blur-md"
+    class="max-w-7xl mx-auto w-[95%] sm:w-[90%] lg:w-[70%] h-14 sm:h-16 flex justify-between items-center px-3 sm:px-4 bg-black/40 my-1 rounded-xl backdrop-blur-md"
   >
     <!-- Logo Section -->
     <a routerLink="/">
@@ -20,16 +20,30 @@
     </a>
 
     <!-- Desktop Navigation Actions -->
+    @defer (on idle) { @if (!isMobileMenuOpen()) {
     <app-desktop-nav-actions
       [isLoggedIn]="isLoggedIn()"
       [(showLoginModel)]="showLoginModel"
     />
+    } } @placeholder {
+    <!-- Move display visibility (hidden on mobile, flex on sm+) to the wrapper -->
+    <div class="hidden sm:flex items-center gap-4">
+      <div class="space-y-2">
+        <!-- Fixed h-4 height added; valid w-44 & w-56 widths used -->
+        <hlm-skeleton class="h-4 w-40 sm:w-44 md:w-64 lg:w-90" />
+        <hlm-skeleton class="h-4 w-32 sm:w-40 md:w-56 lg:w-80" />
+      </div>
 
-    <!-- Mobile Controls (Avatar/Login + Hamburger toggle) -->
+      <!-- Avatar Skeleton -->
+      <hlm-skeleton class="size-9 rounded-full md:size-10 shrink-0" />
+    </div>
+    }
+
+    <!-- Mobile Controls -->
     <div class="flex items-center gap-2 md:hidden">
-      @if (isLoggedIn()) {
-      <spartan-avatar></spartan-avatar>
-      }
+      @defer (when isLoggedIn()) { @if (isLoggedIn()) {
+      <spartan-avatar />
+      } }
 
       <button
         type="button"
@@ -46,9 +60,12 @@
   </div>
 
   <!-- Mobile Dropdown Menu -->
+  @defer (when isMobileMenuOpen()) { @if(isMobileMenuOpen()){
   <app-mobile-nav-actions
     [(showLoginModel)]="showLoginModel"
-    [(isMobileMenuOpen)]="isMobileMenuOpen"
+    [isMobileMenuOpen]="isMobileMenuOpen()"
+    (isMobileMenuOpenChange)="isMobileMenuOpen.set($event)"
     [isLoggedIn]="isLoggedIn()"
   />
+  } }
 </nav>

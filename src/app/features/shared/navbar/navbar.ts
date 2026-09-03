@@ -8,10 +8,11 @@ import {
   lucideMenu,
   lucideX,
 } from "@ng-icons/lucide";
-import { Auth } from "../../../core/auth/auth";
 import { Avatar } from "./avtaar/avtaar";
 import { DesktopNavActions } from "./desktop-nav-actions/desktop-nav-actions";
 import { MobileNavActions } from "./mobile-nav-actions/mobile-nav-actions";
+import { AuthService } from "../../../core/auth/auth";
+import { HlmSkeleton } from "@spartan-ng/helm/skeleton";
 
 @Component({
   imports: [
@@ -21,6 +22,7 @@ import { MobileNavActions } from "./mobile-nav-actions/mobile-nav-actions";
     NgOptimizedImage,
     DesktopNavActions,
     MobileNavActions,
+    HlmSkeleton,
   ],
   selector: "app-navbar",
   styleUrl: "./navbar.css",
@@ -30,10 +32,10 @@ import { MobileNavActions } from "./mobile-nav-actions/mobile-nav-actions";
   templateUrl: "./navbar.html",
 })
 export class Navbar {
-  private readonly auth = inject(Auth);
+  private readonly auth = inject(AuthService);
 
   showLoginModel = this.auth.showLoginModal;
-  isLoggedIn = this.auth.isLoggedIn; // Bind the signal directly instead of invoking it once
+  isLoggedIn = this.auth.isLoggedIn;
   isHidden = input<boolean>(false);
   isMobileMenuOpen = signal<boolean>(false);
 
