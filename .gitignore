@@ -46,3 +46,4 @@ Thumbs.db
 
 #Spartan componenets 
 /src/shared
+/package-lock.json
