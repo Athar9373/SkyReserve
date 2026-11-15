@@ -1,0 +1,20 @@
+<div class="mb-5">
+  <div class="flex justify-between gap-0.5 flex-col">
+    <span class="text-xs font-medium text-slate-800 uppercase">{{ label() }}</span>
+    <span class="text-[10px] text-slate-500"> on the day of travel </span>
+  </div>
+
+  <hlm-radio-group
+    class="grid gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200 text-center w-full mt-2"
+    [style.grid-template-columns]="gridColumns()"
+    [ngModel]="count()"
+    (ngModelChange)="count.set($event)"
+  >
+    @for (n of numArray(); track n) {
+      <label hlmLabel [class]="getCardClass(n)">
+        <hlm-radio [value]="n" class="sr-only" />
+        <span>{{ n }}</span>
+      </label>
+    }
+  </hlm-radio-group>
+</div>

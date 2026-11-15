@@ -1,0 +1,92 @@
+<hlm-popover
+  sideOffset="8"
+  class="w-full block h-full"
+  [state]="popoverState()"
+  (stateChanged)="onPopoverStateChange($event)"
+>
+  <!-- Trigger Button (Flat Grid Item Style) -->
+  <button
+    hlmPopoverTrigger
+    hlmBtn
+    variant="ghost"
+    class="group relative w-full h-full p-2 sm:p-3 text-left justify-start bg-transparent hover:bg-transparent focus:bg-transparent aria-expanded:bg-transparent data-[state=open]:bg-transparent shadow-none border-0 focus:outline-none focus-visible:ring-0 cursor-pointer"
+  >
+    <div class="flex flex-col justify-between h-full w-full gap-1.5 sm:gap-2 min-w-0">
+      <!-- Label Header -->
+      <div class="flex items-center justify-between w-full">
+        <span
+          class="text-[11px] sm:text-xs font-semibold tracking-wider text-slate-400 uppercase truncate"
+        >
+          Travellers
+        </span>
+        <ng-icon
+          name="lucideChevronDown"
+          class="text-base sm:text-lg text-slate-400 group-hover:text-blue-500 transition-transform duration-200 group-data-[state=open]:rotate-180 shrink-0 ml-1"
+        />
+      </div>
+
+      <!-- Count & Main Display -->
+      <div class="flex items-baseline gap-1.5 min-w-0">
+        <span class="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight leading-none">
+          {{ totalCount() }}
+        </span>
+        <span class="text-xs sm:text-sm font-semibold text-slate-600 truncate">
+          {{ totalCount() === 1 ? 'Traveller' : 'Travellers' }}
+        </span>
+      </div>
+
+      <!-- Compact Subtitle Indicator -->
+      <div
+        class="flex items-center gap-1.5 text-[11px] sm:text-xs text-slate-500 font-medium truncate"
+      >
+        <span class="truncate">{{ totalCount() }} Passenger(s)</span>
+      </div>
+    </div>
+  </button>
+
+  <!-- Popover Content Dropdown -->
+  <hlm-popover-content
+    class="w-[calc(100vw-2rem)] max-w-[360px] sm:max-w-[420px] p-5 sm:p-6 rounded-2xl bg-white shadow-2xl border border-slate-100 z-50"
+    *brnPopoverContent="let ctx"
+    appear
+  >
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+      <div>
+        <h4 class="text-sm sm:text-base font-bold text-slate-800">Select Passengers</h4>
+        <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Choose total passenger count</p>
+      </div>
+      <span
+        class="text-[11px] sm:text-xs font-semibold px-2.5 py-0.5 bg-blue-50 text-blue-600 rounded-full border border-blue-100/60"
+      >
+        Max 9
+      </span>
+    </div>
+
+    <!-- Count Picker Section -->
+    <div class="py-1">
+      <app-traveler-count-picker
+        [(count)]="totalCount"
+        label="Passengers"
+        [numArray]="[1, 2, 3, 4, 5, 6, 7, 8, 9]"
+        class="w-full"
+      ></app-traveler-count-picker>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+      <div class="text-xs text-slate-500">
+        Total: <span class="font-extrabold text-slate-800">{{ totalCount() }} Pax</span>
+      </div>
+
+      <button
+        hlmBtn
+        size="sm"
+        (click)="onPopoverStateChange('closed')"
+        class="px-10 py-5 text-xs font-bold text-white rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] shadow-md shadow-blue-500/20 transition-all cursor-pointer"
+      >
+        Done
+      </button>
+    </div>
+  </hlm-popover-content>
+</hlm-popover>

@@ -1,0 +1,93 @@
+<div class="flex gap-8 divide-x divide-slate-100">
+  <!-- FIRST MONTH -->
+  <div class="flex flex-col min-w-80">
+    <div class="flex items-center justify-between pb-4">
+      <button
+        hlmBtn
+        variant="ghost"
+        size="icon"
+        class="h-8 w-8 text-slate-600 hover:bg-slate-100 rounded-full"
+        (click)="previousMonth()"
+        [disabled]="isPrevDisabled()"
+      >
+        <ng-icon name="lucideChevronLeft" class="text-base" />
+      </button>
+
+      <span class="text-sm font-bold text-slate-800">
+        {{ firstMonth() | date: 'MMMM yyyy' }}
+      </span>
+
+      <div class="w-8"></div>
+    </div>
+
+    <div class="grid grid-cols-7 text-center mb-2">
+      @for (day of weekDays; track day) {
+        <span class="text-sm font-semibold text-slate-400">{{ day }}</span>
+      }
+    </div>
+
+    <div class="grid grid-cols-7 gap-y-1">
+      @for (day of firstMonthDays(); track $index) {
+        @if (day) {
+          <button
+            type="button"
+            (click)="onDateClick(day)"
+            (mouseenter)="onDateHover(day)"
+            [disabled]="isDateDisabled(day)"
+            [class]="getDayClasses(day)"
+          >
+            {{ day.getDate() }}
+          </button>
+        } @else {
+          <div></div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- SECOND MONTH -->
+  <div class="pl-8 flex flex-col w-90">
+    <div class="flex items-center justify-between pb-4">
+      <div class="w-8"></div>
+
+      <span class="text-sm font-bold text-slate-800">
+        {{ secondMonth() | date: 'MMMM yyyy' }}
+      </span>
+
+      <button
+        hlmBtn
+        variant="ghost"
+        size="icon"
+        class="h-8 w-8 text-slate-600 hover:bg-slate-100 rounded-full"
+        (click)="nextMonth()"
+        [disabled]="isNextDisabled()"
+      >
+        <ng-icon name="lucideChevronRight" class="text-base" />
+      </button>
+    </div>
+
+    <div class="grid grid-cols-7 text-center mb-2">
+      @for (day of weekDays; track day) {
+        <span class="text-sm font-semibold text-slate-400">{{ day }}</span>
+      }
+    </div>
+
+    <div class="grid grid-cols-7 gap-y-1 text-sm">
+      @for (day of secondMonthDays(); track $index) {
+        @if (day) {
+          <button
+            type="button"
+            (click)="onDateClick(day)"
+            (mouseenter)="onDateHover(day)"
+            [disabled]="isDateDisabled(day)"
+            [class]="getDayClasses(day)"
+          >
+            {{ day.getDate() }}
+          </button>
+        } @else {
+          <div></div>
+        }
+      }
+    </div>
+  </div>
+</div>

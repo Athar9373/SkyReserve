@@ -1,0 +1,24 @@
+<button
+  hlmBtn
+  variant="ghost"
+  size="icon"
+  class="rounded-full"
+  [hlmDropdownMenuTrigger]="menu"
+  class="cursor-pointer"
+>
+  <hlm-avatar>
+    <img hlmAvatarImage src="/assets/avatar.png" alt="@spartan-ui logo" />
+    <span hlmAvatarFallback>U</span>
+  </hlm-avatar>
+</button>
+
+<ng-template #menu>
+  <hlm-dropdown-menu>
+    <hlm-dropdown-menu-group>
+      <button hlmDropdownMenuItem variant="destructive" (click)="Logout()">
+        <ng-icon name="lucideLogOut" />
+        Log out
+      </button>
+    </hlm-dropdown-menu-group>
+  </hlm-dropdown-menu>
+</ng-template>
