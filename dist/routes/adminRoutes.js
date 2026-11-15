@@ -1,0 +1,17 @@
+"use strict";
+const express_1 = require("express");
+const flightController_1 = require("../controllers/flightController");
+const adminController_1 = require("../controllers/adminController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+router.use(authMiddleware_1.authMiddleware, authMiddleware_1.adminRoleMiddleware);
+router.get("/users", adminController_1.getUsers);
+router.delete("/users", (req, res) => res.status(400).json({ error: "A userId is required" }));
+router.delete("/users/:userId", adminController_1.deleteUser);
+router.get("/bookings", adminController_1.getAdminBookings);
+router.post("/bookings/:bookingId/cancel", adminController_1.cancelAdminBooking);
+router.get("/flights", adminController_1.getFlightSchedule);
+router.post("/flights/:flightId/cancel", adminController_1.cancelAdminFlight);
+router.get("/analytics", adminController_1.getAdminAnalytics);
+router.post("/flights", flightController_1.createFlight);
+module.exports = router;

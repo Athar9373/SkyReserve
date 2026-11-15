@@ -1,0 +1,13 @@
+"use strict";
+const express_1 = require("express");
+const bookingController_1 = require("../controllers/bookingController");
+const authMiddleware_1 = require("../middleware/authMiddleware");
+const router = (0, express_1.Router)();
+router.use(authMiddleware_1.authMiddleware);
+router.get("/", bookingController_1.getMyTrips);
+router.post("/", bookingController_1.createBooking);
+router.post("/payment/:bookingId", bookingController_1.processPayment);
+router.post("/:bookingId/cancellation-quote", bookingController_1.quoteMyTripCancellation);
+router.post("/:bookingId/cancel", bookingController_1.cancelMyTripTickets);
+router.delete("/:bookingId", bookingController_1.cancelBooking);
+module.exports = router;
