@@ -1,0 +1,18 @@
+<hlm-toaster />
+
+@defer (when showLoginModal()) {
+  @if (showLoginModal() && !isLoggedIn()) {
+    <app-login-dialog />
+  }
+} @placeholder {
+  <div></div>
+}
+@defer (when showSignUpModal()) {
+  @if (showSignUpModal() && !isLoggedIn()) {
+    <app-sign-up-dialog />
+  }
+} @placeholder {
+  <div></div>
+}
+
+<router-outlet></router-outlet>

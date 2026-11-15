@@ -1,0 +1,50 @@
+<div class="w-full max-w-4xl mx-auto space-y-6 text-gray-800">
+  <!-- Section Heading -->
+  <div class="space-y-1">
+    <h2 class="text-xl font-bold tracking-tight text-gray-900 sm:text-2xl">Passenger Details</h2>
+    <p class="text-sm text-gray-500">
+      Please enter the details for all travelers matching their official travel documents.
+    </p>
+  </div>
+
+  <form [formGroup]="passengerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+    <div formArrayName="passengers" class="space-y-4 overflow-hidden">
+      @for (passenger of passengers.controls; track $index) {
+        <div [@slideFade]>
+          <app-passenger-card
+            [passengerGroup]="$any(passenger)"
+            [index]="$index"
+            [canRemove]="passengers.controls.length > 1"
+            (remove)="removePassengerSlot($index)"
+          />
+        </div>
+      }
+    </div>
+
+    <!-- Controls & Submit Actions -->
+    <div class="flex items-center justify-between pt-2">
+      <button
+        type="button"
+        (click)="addNewUserSlot()"
+        [disabled]="passengers.length >= travelerCount()"
+        class="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-800 uppercase tracking-wide disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none cursor-pointer"
+      >
+        <ng-icon name="lucidePlus" class="text-sm" />
+        <span>+ Add Passenger Slot</span>
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="isSaving() || passengerForm.invalid"
+        class="inline-flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:bg-gray-300 disabled:text-gray-500 text-white font-bold py-3 px-8 rounded-xl cursor-pointer disabled:cursor-not-allowed shadow-md transition-all text-sm uppercase min-w-[220px]"
+      >
+        @if (isSaving()) {
+          <hlm-spinner size="sm" class="text-white" />
+          <span>Saving Passengers...</span>
+        } @else {
+          <span>Save Passenger Details</span>
+        }
+      </button>
+    </div>
+  </form>
+</div>

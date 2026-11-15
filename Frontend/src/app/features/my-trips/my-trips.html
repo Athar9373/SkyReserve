@@ -1,0 +1,335 @@
+<div class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+  <div class="border-b border-gray-200 pb-4">
+    <h1 class="text-2xl font-bold text-gray-900 uppercase tracking-tight flex items-center gap-2">
+      <ng-icon name="lucidePlane" class="text-sky-600" />
+      <span>My Trips</span>
+    </h1>
+  </div>
+
+  @if (isLoading()) {
+    <div class="flex flex-col items-center justify-center p-12 space-y-3 text-gray-500">
+      <hlm-spinner size="md" />
+      <p class="text-sm font-medium">Fetching your trips...</p>
+    </div>
+  } @else if (error()) {
+    <div class="p-4 bg-red-50 border border-red-200 text-red-600 rounded-xl text-sm font-medium">
+      {{ error() }}
+    </div>
+  } @else if (trips().length > 0) {
+    <div class="space-y-6">
+      @for (trip of trips(); track trip.bookingId) {
+        <div
+          class="bg-white border border-gray-200 rounded-2xl shadow-xs overflow-hidden transition-all duration-200 hover:shadow-md"
+        >
+          <!-- Card Header -->
+          <div
+            class="bg-sky-50/60 p-4 border-b border-sky-100 flex flex-wrap items-center justify-between gap-2"
+          >
+            <div class="flex items-center gap-3">
+              <span
+                class="text-xs font-semibold px-2.5 py-1 rounded-full border"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-800 border-emerald-200': trip.status === 'CONFIRMED',
+                  'bg-amber-100 text-amber-800 border-amber-200': trip.status === 'PENDING',
+                  'bg-rose-100 text-rose-800 border-rose-200': trip.status === 'CANCELLED',
+                }"
+              >
+                {{ trip.status }}
+              </span>
+              <span class="text-sm font-bold text-gray-800 tracking-wider"
+                >PNR: {{ trip.pnr }}</span
+              >
+            </div>
+
+            @if (cancellationNotice()) {
+              <p class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800" role="status">
+                {{ cancellationNotice() }}
+              </p>
+            }
+            @if (cancellationError()) {
+              <p class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800" role="alert">
+                {{ cancellationError() }}
+              </p>
+            }
+
+            <div class="text-xs text-gray-500 font-medium flex items-center gap-1">
+              <ng-icon name="lucideCalendar" />
+              <span>Booked on {{ trip.bookingDate | date: 'dd MMM yyyy, HH:mm' }}</span>
+            </div>
+          </div>
+
+          <!-- Card Body: Flight Details -->
+          <div class="p-6 space-y-6">
+            <div
+              class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50 p-4 rounded-xl"
+            >
+              <div>
+                <p class="text-xs text-gray-400 font-semibold uppercase">Flight</p>
+                <p class="text-base font-bold text-gray-900">{{ trip.flight.flightNumber }}</p>
+              </div>
+
+              <div class="flex items-center gap-4 text-center">
+                <div>
+                  <p class="text-xl font-black text-sky-900">{{ trip.flight.sourceAirportCode }}</p>
+                  <p class="text-xs font-medium text-gray-500">
+                    {{ trip.flight.departureTime | date: 'HH:mm' }}
+                  </p>
+                </div>
+
+                <ng-icon name="lucideArrowRight" class="text-sky-500 text-lg" />
+
+                <div>
+                  <p class="text-xl font-black text-sky-900">{{ trip.flight.destAirportCode }}</p>
+                  <p class="text-xs font-medium text-gray-500">
+                    {{ trip.flight.arrivalTime | date: 'HH:mm' }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="text-right">
+                <p class="text-xs text-gray-400 font-semibold uppercase">Total Fare</p>
+                <p class="text-lg font-bold text-emerald-600">₹{{ trip.totalFare }}</p>
+              </div>
+            </div>
+
+            <!-- Passengers / Tickets List -->
+            <div class="space-y-3">
+              <h3
+                class="text-xs font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1"
+              >
+                <ng-icon name="lucideTicket" />
+                <span>Passenger Details</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                @for (ticket of trip.tickets; track ticket.ticketId) {
+                  <div
+                    class="flex items-center justify-between p-3 border border-gray-200 rounded-xl bg-white"
+                  >
+                    <div class="flex items-center gap-2.5">
+                      <div
+                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"
+                      >
+                        <ng-icon name="lucideUser" />
+                      </div>
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">
+                          {{ ticket.passengerName }}
+                        </p>
+                        <p class="text-xs text-gray-400">Seat: {{ ticket.seatNumber }}</p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[11px] font-semibold px-2 py-0.5 rounded-md"
+                      [ngClass]="{
+                        'bg-emerald-50 text-emerald-700': ticket.status === 'CONFIRMED',
+                        'bg-amber-50 text-amber-700': ticket.status === 'PENDING',
+                        'bg-rose-50 text-rose-700': ticket.status === 'CANCELLED',
+                        'bg-orange-50 text-orange-700': ticket.status === 'FLIGHT_CANCELLED',
+                      }"
+                    >
+                      {{ ticket.status }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- Collapsible Action Footer -->
+          <details class="group border-t border-gray-100 bg-slate-50/70">
+            <summary
+              class="px-6 py-3 flex items-center justify-between cursor-pointer select-none text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors list-none"
+            >
+              <div class="flex items-center gap-2">
+                @if (!trip.tickets.some(ticket => ticket.status === 'CONFIRMED' || ticket.status === 'PENDING')) {
+                  <span class="text-rose-600 font-semibold">Booking Cancelled</span>
+                } @else {
+                  <span>Manage Booking Options</span>
+                }
+              </div>
+              <div class="flex items-center gap-1 text-slate-400 group-hover:text-slate-600">
+                <span class="text-[11px] group-open:hidden">Show actions</span>
+                <span class="text-[11px] hidden group-open:inline">Hide actions</span>
+                <!-- Chevron Arrow that rotates on expand -->
+                <ng-icon
+                  name="lucideChevronDown"
+                  class="text-sm transition-transform duration-200 group-open:rotate-180"
+                />
+              </div>
+            </summary>
+
+            <div
+              class="px-6 pb-4 pt-1 flex items-center justify-between gap-4 border-t border-gray-100/50"
+            >
+              <p class="text-xs text-slate-500">
+                @if (!canCancelTicket(trip)) {
+                  Cancellation is closed within 2 hours of departure.
+                } @else {
+                  Select passenger tickets to cancel. A full refund with no fee applies at least 2 hours before departure.
+                }
+              </p>
+
+              @if (trip.tickets.some(ticket => ticket.status === 'CONFIRMED' || ticket.status === 'PENDING')) {
+                <hlm-dialog>
+                  <button
+                    brnDialogTrigger
+                    type="button"
+                    (click)="openCancelDialog(trip)"
+                    [disabled]="!canCancelTicket(trip)"
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-rose-600 bg-white border border-rose-200 hover:bg-rose-600 hover:text-white hover:border-rose-600 transition-all cursor-pointer shadow-xs active:scale-95 group/btn"
+                  >
+                    <ng-icon
+                      name="lucideTrash2"
+                      class="text-xs transition-transform group-hover/btn:rotate-12"
+                    />
+                    <span>Cancel Tickets</span>
+                    <ng-icon
+                      name="lucideArrowRight"
+                      class="text-xs transition-transform group-hover/btn:translate-x-0.5"
+                    />
+                  </button>
+
+                  <hlm-dialog-content
+                    *brnDialogContent="let ctx"
+                    class="sm:max-w-[425px] rounded-2xl border border-rose-100 shadow-2xl bg-white p-6"
+                  >
+                    <hlm-dialog-header class="space-y-3">
+                      <div
+                        class="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto sm:mx-0"
+                      >
+                        <ng-icon name="lucideAlertTriangle" class="text-2xl" />
+                      </div>
+                      <div>
+                        <h2 hlmDialogTitle class="text-lg font-bold text-gray-900">
+                          Cancel Passenger Tickets?
+                        </h2>
+                        <p hlmDialogDescription class="text-xs text-gray-500 mt-1">
+                          Review the passengers and refund before cancelling PNR
+                          <strong class="text-gray-800 uppercase">{{
+                            selectedTripToCancel()?.pnr
+                          }}</strong
+                          >.
+                        </p>
+                      </div>
+                    </hlm-dialog-header>
+
+                    @if (selectedTripToCancel(); as selectedTrip) {
+                      <div class="my-4 p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-3">
+                        <div class="flex justify-between text-xs">
+                          <span class="text-gray-500">Flight:</span>
+                          <span class="font-bold text-gray-800">{{
+                            selectedTrip.flight.flightNumber
+                          }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                          <span class="text-gray-500">Route:</span>
+                          <span class="font-bold text-gray-800">
+                            {{ selectedTrip.flight.sourceAirportCode }} →
+                            {{ selectedTrip.flight.destAirportCode }}
+                          </span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                          <span class="text-gray-500">Total Fare:</span>
+                          <span class="font-bold text-emerald-600"
+                            >₹{{ selectedTrip.totalFare }}</span
+                          >
+                        </div>
+                        <div class="border-t border-gray-200 pt-3">
+                          <p class="mb-2 text-xs font-bold text-gray-700">Select passengers</p>
+                          <div class="max-h-44 space-y-2 overflow-y-auto">
+                            @for (ticket of selectedTrip.tickets; track ticket.ticketId) {
+                              <label class="flex items-center justify-between gap-3 rounded-lg bg-white p-2 text-xs">
+                                <span class="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    [checked]="isTicketSelected(ticket.ticketId)"
+                                    [disabled]="ticket.status !== 'CONFIRMED' && ticket.status !== 'PENDING'"
+                                    (change)="toggleTicketSelection(selectedTrip, ticket.ticketId, $any($event.target).checked)"
+                                  />
+                                  <span>{{ ticket.passengerName }} · Seat {{ ticket.seatNumber }}</span>
+                                </span>
+                                <span class="text-slate-500">{{ ticket.status }}</span>
+                              </label>
+                            }
+                          </div>
+                        </div>
+                        @if (cancellationQuote(); as quote) {
+                          <div class="space-y-1 border-t border-gray-200 pt-3 text-xs">
+                            <p class="font-bold text-gray-700">Selected-ticket refund breakdown</p>
+                            @for (quotedTicket of quote.tickets; track quotedTicket.ticketId) {
+                              @if (selectedTrip.tickets.find(ticket => ticket.ticketId === quotedTicket.ticketId); as quotedPassenger) {
+                                <p class="flex justify-between text-gray-600">
+                                  <span>{{ quotedPassenger.passengerName }} · Seat {{ quotedPassenger.seatNumber }}</span>
+                                  <span>Refund ₹{{ quotedTicket.refundAmount }} · Fee ₹{{ quotedTicket.cancellationFee }}</span>
+                                </p>
+                              }
+                            }
+                            <p class="flex justify-between border-t border-gray-200 pt-1 font-bold">
+                              <span>Selected refund</span>
+                              <span>₹{{ quote.refundAmount }}</span>
+                            </p>
+                            <p class="pt-1 text-gray-500">{{ quote.policy }}</p>
+                          </div>
+                        }
+                        @if (isQuotingCancellation()) {
+                          <p class="pt-2 text-xs text-slate-500" role="status">Calculating the cancellation refund...</p>
+                        }
+                        @if (cancellationError()) {
+                          <p class="pt-2 text-xs text-rose-700" role="alert">{{ cancellationError() }}</p>
+                        }
+                        @if (entireTripQuote() !== null) {
+                          <p class="flex justify-between border-t border-gray-200 pt-2 text-xs font-bold text-gray-700">
+                            <span>Full-trip refund estimate</span>
+                            <span>₹{{ entireTripQuote() }}</span>
+                          </p>
+                        }
+                      </div>
+                    }
+
+                    <hlm-dialog-footer class="flex flex-row justify-end gap-2 pt-2">
+                      <button
+                        type="button"
+                        (click)="ctx.close()"
+                        class="px-4 py-2 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all cursor-pointer"
+                      >
+                        Keep Tickets
+                      </button>
+                      <button
+                        type="button"
+                        (click)="confirmCancellation(ctx, true)"
+                        [disabled]="isCancelling() || isQuotingCancellation() || !cancellationQuote() || entireTripQuote() === null || !canCancelTicket(selectedTripToCancel()!)"
+                        class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 rounded-xl transition-all cursor-pointer shadow-sm"
+                      >
+                        Cancel Entire Trip
+                      </button>
+                      <button
+                        type="button"
+                        (click)="confirmCancellation(ctx)"
+                        [disabled]="isCancelling() || isQuotingCancellation() || !cancellationQuote() || !selectedTicketIds().length"
+                        class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-rose-700 hover:bg-rose-800 disabled:bg-rose-300 rounded-xl transition-all cursor-pointer shadow-sm"
+                      >
+                        @if (isCancelling()) {
+                          <hlm-spinner size="xs" />
+                          <span>Cancelling...</span>
+                        } @else {
+                          <span>Cancel Selected Tickets</span>
+                        }
+                      </button>
+                    </hlm-dialog-footer>
+                  </hlm-dialog-content>
+                </hlm-dialog>
+              }
+            </div>
+          </details>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="text-center p-12 bg-white rounded-2xl border border-gray-200 space-y-3">
+      <ng-icon name="lucidePlane" class="text-4xl text-gray-300" />
+      <p class="text-base font-semibold text-gray-700">No trips found</p>
+      <p class="text-xs text-gray-400">You haven't made any flight bookings yet.</p>
+    </div>
+  }
+</div>

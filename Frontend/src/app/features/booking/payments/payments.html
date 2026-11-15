@@ -1,0 +1,110 @@
+<div
+  class="w-full max-w-lg mx-auto bg-white border border-gray-200 rounded-xl shadow-xs overflow-hidden"
+>
+  <!-- Header -->
+  <div class="bg-sky-50/80 p-4 border-b border-sky-100 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <ng-icon name="lucideCreditCard" class="text-sky-600 text-xl" />
+      <span class="font-bold text-gray-800 text-sm uppercase">Payment Details</span>
+    </div>
+    @if (totalAmount()) {
+      <span class="text-sm font-bold text-sky-700">₹{{ totalAmount() }}</span>
+    }
+  </div>
+
+  <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()" class="p-6 space-y-4">
+    <!-- Offline Alert Banner -->
+    @if (isOffline()) {
+      <div
+        class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2"
+      >
+        <ng-icon name="lucideWifiOff" class="text-amber-600 text-base flex-shrink-0" />
+        <span
+          >Kindly check your internet connection. You appear to be offline or on a weak
+          connection.</span
+        >
+      </div>
+    }
+
+    <!-- Card Number -->
+    <div class="space-y-1">
+      <label class="block text-xs font-semibold text-gray-600">Card Number *</label>
+      <input
+        hlmInput
+        type="text"
+        maxLength="16"
+        formControlName="cardNumber"
+        placeholder="4111 1111 1111 1111"
+        class="w-full text-sm h-11 px-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500"
+      />
+      @if (paymentForm.get('cardNumber')?.touched && paymentForm.get('cardNumber')?.invalid) {
+        <span class="text-[11px] text-red-500 pl-1"> Valid 16-digit card number is required </span>
+      }
+    </div>
+
+    <!-- Cardholder Name -->
+    <div class="space-y-1">
+      <label class="block text-xs font-semibold text-gray-600">Cardholder Name *</label>
+      <input
+        hlmInput
+        type="text"
+        formControlName="cardHolderName"
+        placeholder="Name as printed on card"
+        class="w-full text-sm h-11 px-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500"
+      />
+      @if (
+        paymentForm.get('cardHolderName')?.touched && paymentForm.get('cardHolderName')?.invalid
+      ) {
+        <span class="text-[11px] text-red-500 pl-1"> Cardholder name is required </span>
+      }
+    </div>
+
+    <!-- CVV -->
+    <div class="space-y-1">
+      <label class="block text-xs font-semibold text-gray-600">CVV *</label>
+      <input
+        hlmInput
+        type="password"
+        maxLength="4"
+        formControlName="cvv"
+        placeholder="123"
+        class="w-32 text-sm h-11 px-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-sky-500"
+      />
+      @if (paymentForm.get('cvv')?.touched && paymentForm.get('cvv')?.invalid) {
+        <span class="text-[11px] text-red-500 pl-1"> Valid 3 or 4 digit CVV is required </span>
+      }
+    </div>
+
+    <!-- Error Banner -->
+    @if (bookingService.paymentError()) {
+      <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
+        {{ bookingService.paymentError() }}
+      </div>
+    }
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      [disabled]="
+        isOffline() ||
+        bookingService.isSubmitting() ||
+        bookingService.isProcessingPayment() ||
+        paymentForm.invalid
+      "
+      class="w-full inline-flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 disabled:bg-gray-300 disabled:text-gray-500 text-white font-bold py-3 px-8 rounded-xl cursor-pointer disabled:cursor-not-allowed shadow-md transition-all text-sm uppercase"
+    >
+      @if (bookingService.isSubmitting() || bookingService.isProcessingPayment()) {
+        <hlm-spinner size="sm" class="text-white" />
+        <span>Processing Booking & Payment...</span>
+      } @else {
+        <ng-icon name="lucideLock" class="text-base" />
+        <span>Pay Now</span>
+      }
+    </button>
+
+    <div class="flex items-center justify-center gap-1 text-[11px] text-gray-400 pt-1">
+      <ng-icon name="lucideShieldCheck" class="text-emerald-500 text-sm" />
+      <span>256-bit SSL Encrypted Payment</span>
+    </div>
+  </form>
+</div>

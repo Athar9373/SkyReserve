@@ -1,0 +1,534 @@
+<main class="admin-page min-h-screen px-4 pb-16 pt-24 sm:px-8">
+  <div class="mx-auto flex max-w-6xl flex-col">
+    <header class="order-0 mb-8">
+      <p class="text-sm font-bold uppercase tracking-[0.2em] text-blue-600">SkyReserve</p>
+      <h1 class="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">Admin dashboard</h1>
+      <p class="mt-2 text-slate-600">Manage registered users and add flights to the schedule.</p>
+    </header>
+
+    <section class="order-50 mb-8 rounded-2xl bg-white p-5 shadow-lg sm:p-7" aria-labelledby="users-title">
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 id="users-title" class="text-xl font-bold text-slate-900">User management</h2>
+          <p class="text-sm text-slate-500">Review accounts and remove a specific user.</p>
+        </div>
+        <button
+          type="button"
+          (click)="loadUsers()"
+          class="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          Refresh
+        </button>
+      </div>
+
+      @if (deleteError()) {
+        <p class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{{ deleteError() }}</p>
+      }
+      @if (userSuccess()) {
+        <p class="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700" role="status">
+          {{ userSuccess() }}
+        </p>
+      }
+      @if (usersError()) {
+        <p class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">
+          {{ usersError() }}
+          <button type="button" (click)="loadUsers()" class="ml-2 font-bold underline">Try again</button>
+        </p>
+      } @else if (isUsersLoading()) {
+        <p class="py-8 text-center text-slate-500" role="status">Loading users...</p>
+      } @else if (!users().length) {
+        <p class="py-8 text-center text-slate-500">No users found.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-170 text-left text-sm">
+            <thead class="border-b border-slate-200 text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th class="px-3 py-3 font-semibold">User</th>
+                <th class="px-3 py-3 font-semibold">Email</th>
+                <th class="px-3 py-3 font-semibold">Phone</th>
+                <th class="px-3 py-3 font-semibold">Role</th>
+                <th class="px-3 py-3 text-right font-semibold">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of (showAllUsers() ? paginatedUsers() : previewUsers()); track user.userId) {
+                <tr class="border-b border-slate-100 last:border-0">
+                  <td class="px-3 py-4 font-semibold text-slate-900">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </td>
+                  <td class="px-3 py-4 text-slate-600">{{ user.email }}</td>
+                  <td class="px-3 py-4 text-slate-600">{{ user.phoneNumber }}</td>
+                  <td class="px-3 py-4 text-slate-600">{{ user.role || 'USER' }}</td>
+                  <td class="px-3 py-4 text-right">
+                    <button
+                      type="button"
+                      (click)="deleteUser(user)"
+                      [disabled]="isAdmin(user) || isCurrentUser(user) || deletingUserId() === user.userId"
+                      [attr.aria-label]="'Delete ' + user.firstName + ' ' + user.lastName"
+                      [title]="isAdmin(user) ? 'Admin accounts cannot be deleted' : isCurrentUser(user) ? 'You cannot delete your own account' : 'Delete user'"
+                      class="rounded-lg bg-red-50 px-3 py-2 font-semibold text-red-700 hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {{ deletingUserId() === user.userId ? 'Deleting...' : 'Delete user' }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            (click)="showAllUsers.update(value => !value)"
+            class="rounded-lg bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100"
+          >
+            {{ showAllUsers() ? 'Back to Dashboard Preview' : 'View All Users' }}
+          </button>
+          @if (showAllUsers()) {
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <input
+                #userSearchInput
+                type="search"
+                [value]="userSearch()"
+                (input)="setUserSearch(userSearchInput.value)"
+                placeholder="Search name, email, or phone"
+                aria-label="Search users"
+                class="rounded-lg border border-slate-300 px-3 py-2"
+              />
+              <select
+                #roleFilter
+                [value]="userRoleFilter()"
+                (change)="setUserRole(roleFilter.value)"
+                aria-label="Filter users by role"
+                class="rounded-lg border border-slate-300 px-3 py-2"
+              >
+                <option value="ALL">All roles</option>
+                <option value="USER">Users</option>
+                <option value="ADMIN">Admins</option>
+              </select>
+              <label class="flex items-center gap-2">
+                Page size
+                <select
+                  #pageSizeSelect
+                  [value]="userPageSize()"
+                  (change)="setUserPageSize(pageSizeSelect.value)"
+                  class="rounded-lg border border-slate-300 px-2 py-2"
+                >
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                </select>
+              </label>
+            </div>
+          }
+        </div>
+        @if (showAllUsers()) {
+          <div class="mt-3 flex items-center justify-end gap-2">
+            <button
+              type="button"
+              (click)="userPage.set(userPage() - 1)"
+              [disabled]="userPage() <= 1"
+              class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+            >
+              Previous
+            </button>
+            @for (page of userPageNumbers(); track page) {
+              <button
+                type="button"
+                (click)="userPage.set(page)"
+                [attr.aria-current]="userPage() === page ? 'page' : null"
+                class="size-9 rounded-lg border border-slate-300 text-sm aria-[current=page]:bg-blue-600 aria-[current=page]:text-white"
+              >
+                {{ page }}
+              </button>
+            }
+            <button
+              type="button"
+              (click)="userPage.set(userPage() + 1)"
+              [disabled]="userPage() >= userPageCount()"
+              class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+          @if (!filteredUsers().length) {
+            <p class="py-5 text-center text-sm text-slate-500">No users match these filters.</p>
+          }
+        }
+      }
+    </section>
+
+    @if (operationError()) {
+      <p class="order-1 mb-5 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{{ operationError() }}</p>
+    }
+    @if (operationNotice()) {
+      <p class="order-1 mb-5 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800" role="status">
+        {{ operationNotice() }}
+      </p>
+    }
+
+    <section class="order-10 mb-8 rounded-2xl bg-white p-5 shadow-lg sm:p-7" aria-labelledby="analytics-title">
+      <div class="mb-5">
+        <h2 id="analytics-title" class="text-xl font-bold text-slate-900">Operations analytics</h2>
+        <p class="text-sm text-slate-500">Sales, revenue, flight status, and popular routes.</p>
+      </div>
+      @if (analyticsError()) {
+        <p class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">
+          {{ analyticsError() }}
+          <button type="button" (click)="loadAnalytics()" class="ml-2 font-bold underline">Try again</button>
+        </p>
+      } @else if (isAnalyticsLoading()) {
+        <p class="py-8 text-center text-slate-500" role="status">Loading analytics...</p>
+      } @else if (analytics(); as report) {
+        <app-admin-analytics [analytics]="report" />
+      }
+    </section>
+
+    <section class="order-40 mb-8 rounded-2xl bg-white p-5 shadow-lg sm:p-7" aria-labelledby="bookings-title">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <h2 id="bookings-title" class="text-xl font-bold text-slate-900">Booking and ticket management</h2>
+          <p class="text-sm text-slate-500">Review passenger tickets and record an admin reason before cancellation.</p>
+        </div>
+        <button type="button" (click)="loadBookings()" class="rounded-lg border px-4 py-2 text-sm font-semibold">
+          Refresh
+        </button>
+      </div>
+      <div class="mb-4 flex flex-wrap items-center gap-3">
+        <input
+          #bookingSearchInput
+          type="search"
+          [value]="bookingSearch()"
+          (input)="setBookingSearch(bookingSearchInput.value)"
+          placeholder="Search booking, passenger, email, flight, or route"
+          aria-label="Search bookings"
+          class="min-w-60 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+        />
+        <label class="flex items-center gap-2 text-sm">
+          Page size
+          <select
+            #bookingSizeSelect
+            [value]="bookingPageSize()"
+            (change)="setBookingPageSize(bookingSizeSelect.value)"
+            class="rounded-lg border border-slate-300 px-2 py-2"
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+          </select>
+        </label>
+      </div>
+      @if (bookingsError()) {
+        <p class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{{ bookingsError() }}</p>
+      } @else if (isBookingsLoading()) {
+        <p class="py-6 text-center text-slate-500" role="status">Loading bookings...</p>
+      } @else if (!bookings().length) {
+        <p class="py-6 text-center text-slate-500">No bookings found.</p>
+      } @else {
+        <div class="space-y-4">
+          @for (booking of (showAllBookings() ? paginatedBookings() : previewBookings()); track booking.bookingId) {
+            <article class="rounded-xl border border-slate-200 p-4">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p class="font-bold text-slate-900">PNR {{ booking.pnr }} · {{ booking.user.name }}</p>
+                  <p class="text-sm text-slate-600">
+                    {{ booking.user.email }} · {{ booking.flight.flightNumber }}
+                    ({{ booking.flight.sourceAirportCode }} → {{ booking.flight.destAirportCode }})
+                  </p>
+                  <p class="mt-1 text-xs text-slate-500">
+                    {{ booking.status }} · {{ booking.flight.status }} · {{ booking.flight.departureTime | date:'medium' }}
+                  </p>
+                  @if (!canCancelBeforeDeparture(booking.flight.departureTime)) {
+                    <p class="mt-1 text-xs font-semibold text-rose-700">Cancellation disabled: flight has departed.</p>
+                  }
+                </div>
+                <button
+                  type="button"
+                  (click)="cancelAdminBooking(booking)"
+                  [disabled]="!canCancelBeforeDeparture(booking.flight.departureTime) || cancellingBookingId() === booking.bookingId || !booking.tickets.some(ticket => ticket.status === 'PENDING' || ticket.status === 'CONFIRMED')"
+                  class="rounded-lg bg-rose-50 px-3 py-2 text-sm font-semibold text-rose-700 disabled:opacity-40"
+                >
+                  Cancel all tickets in booking
+                </button>
+              </div>
+              <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                @for (ticket of booking.tickets; track ticket.ticketId) {
+                  <div class="flex items-center justify-between rounded-lg bg-slate-50 p-3 text-sm">
+                    <span>{{ ticket.passengerName }} · Seat {{ ticket.seatNumber }} · {{ ticket.status }}</span>
+                    <button
+                      type="button"
+                      (click)="cancelAdminTicket(booking, ticket.ticketId)"
+                      [disabled]="!canCancelBeforeDeparture(booking.flight.departureTime) || cancellingBookingId() === booking.bookingId || (ticket.status !== 'PENDING' && ticket.status !== 'CONFIRMED')"
+                      class="font-semibold text-rose-700 underline disabled:opacity-40"
+                    >
+                      Cancel ticket
+                    </button>
+                  </div>
+                }
+              </div>
+            </article>
+          }
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            (click)="showAllBookings.update(value => !value)"
+            class="rounded-lg bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100"
+          >
+            {{ showAllBookings() ? 'Show Latest Five' : 'View All Bookings' }}
+          </button>
+          @if (showAllBookings()) {
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="bookingPage.set(bookingPage() - 1)"
+                [disabled]="bookingPage() <= 1"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+              >
+                Previous
+              </button>
+              @for (page of bookingPageNumbers(); track page) {
+                <button
+                  type="button"
+                  (click)="bookingPage.set(page)"
+                  [attr.aria-current]="bookingPage() === page ? 'page' : null"
+                  class="size-9 rounded-lg border border-slate-300 text-sm aria-[current=page]:bg-blue-600 aria-[current=page]:text-white"
+                >
+                  {{ page }}
+                </button>
+              }
+              <button
+                type="button"
+                (click)="bookingPage.set(bookingPage() + 1)"
+                [disabled]="bookingPage() >= bookingPageCount()"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          }
+        </div>
+        @if (!filteredBookings().length) {
+          <p class="py-5 text-center text-sm text-slate-500">No bookings match your search.</p>
+        }
+      }
+    </section>
+
+    <section class="order-20 mb-8 rounded-2xl bg-white p-5 shadow-lg sm:p-7" aria-labelledby="schedule-title">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <h2 id="schedule-title" class="text-xl font-bold text-slate-900">Flight schedule</h2>
+          <p class="text-sm text-slate-500">Cancel a flight with passenger and booking impact confirmation.</p>
+        </div>
+        <div class="mb-4 flex flex-wrap items-center gap-3">
+          <input
+            #flightSearchInput
+            type="search"
+            [value]="flightSearch()"
+            (input)="setFlightSearch(flightSearchInput.value)"
+            placeholder="Search flight number, airline, route, or status"
+            aria-label="Search flights"
+            class="min-w-60 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+          <label class="flex items-center gap-2 text-sm">
+            Page size
+            <select
+              #flightSizeSelect
+              [value]="flightPageSize()"
+              (change)="setFlightPageSize(flightSizeSelect.value)"
+              class="rounded-lg border border-slate-300 px-2 py-2"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+            </select>
+          </label>
+        </div>
+        <button type="button" (click)="loadFlights()" class="rounded-lg border px-4 py-2 text-sm font-semibold">
+          Refresh
+        </button>
+      </div>
+      @if (flightsError()) {
+        <p class="rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{{ flightsError() }}</p>
+      } @else if (isFlightsLoading()) {
+        <p class="py-6 text-center text-slate-500" role="status">Loading flight schedule...</p>
+      } @else if (!flights().length) {
+        <p class="py-6 text-center text-slate-500">No flights scheduled.</p>
+      } @else {
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-190 text-left text-sm">
+            <thead class="border-b border-slate-200 text-xs uppercase text-slate-500">
+              <tr>
+                <th class="px-3 py-3">Flight</th>
+                <th class="px-3 py-3">Route</th>
+                <th class="px-3 py-3">Departure</th>
+                <th class="px-3 py-3">Status</th>
+                <th class="px-3 py-3">Impact</th>
+                <th class="px-3 py-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (flight of (showAllFlights() ? paginatedFlights() : previewFlights()); track flight.flightId) {
+                <tr class="border-b border-slate-100 last:border-0">
+                  <td class="px-3 py-3 font-semibold">{{ flight.flightNum }} · {{ flight.airlineName }}</td>
+                  <td class="px-3 py-3">{{ flight.sourceAirport.airportCode }} → {{ flight.destAirport.airportCode }}</td>
+                  <td class="px-3 py-3">{{ flight.departureTime | date:'medium' }}</td>
+                  <td class="px-3 py-3">{{ flight.status }}</td>
+                  <td class="px-3 py-3">{{ flight.bookedPassengerCount }} passengers · {{ flight.bookingCount }} bookings</td>
+                  <td class="px-3 py-3 text-right">
+                    @if (flight.status !== 'CANCELLED') {
+                      <button
+                        type="button"
+                        (click)="cancelAdminFlight(flight)"
+                        [disabled]="!canCancelBeforeDeparture(flight.departureTime) || cancellingFlightId() === flight.flightId"
+                        [title]="!canCancelBeforeDeparture(flight.departureTime) ? 'Flights cannot be cancelled after departure' : 'Cancel flight'"
+                        class="rounded-lg bg-rose-600 px-3 py-2 font-semibold text-white disabled:opacity-40"
+                      >
+                        {{ cancellingFlightId() === flight.flightId ? 'Cancelling...' : 'Cancel flight' }}
+                      </button>
+                    } @else {
+                      <span class="font-semibold text-rose-700">Cancelled</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <button
+            type="button"
+            (click)="showAllFlights.update(value => !value)"
+            class="rounded-lg bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100"
+          >
+            {{ showAllFlights() ? 'Show Newest Five' : 'View All Flights' }}
+          </button>
+          @if (showAllFlights()) {
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                (click)="flightPage.set(flightPage() - 1)"
+                [disabled]="flightPage() <= 1"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+              >
+                Previous
+              </button>
+              @for (page of flightPageNumbers(); track page) {
+                <button
+                  type="button"
+                  (click)="flightPage.set(page)"
+                  [attr.aria-current]="flightPage() === page ? 'page' : null"
+                  class="size-9 rounded-lg border border-slate-300 text-sm aria-[current=page]:bg-blue-600 aria-[current=page]:text-white"
+                >
+                  {{ page }}
+                </button>
+              }
+              <button
+                type="button"
+                (click)="flightPage.set(flightPage() + 1)"
+                [disabled]="flightPage() >= flightPageCount()"
+                class="rounded-lg border border-slate-300 px-3 py-2 text-sm disabled:opacity-40"
+              >
+                Next
+              </button>
+            </div>
+          }
+        </div>
+        @if (!filteredFlights().length) {
+          <p class="py-5 text-center text-sm text-slate-500">No flights match your search.</p>
+        }
+      }
+    </section>
+
+    <section class="order-30 mb-8 rounded-2xl bg-white p-5 shadow-lg sm:p-7" aria-labelledby="flight-title">
+      <div class="mb-5">
+        <h2 id="flight-title" class="text-xl font-bold text-slate-900">Add a flight</h2>
+        <p class="text-sm text-slate-500">Create a new flight for customers to find and book.</p>
+      </div>
+
+      @if (airportsError()) {
+        <p class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">
+          {{ airportsError() }}
+          <button type="button" (click)="loadAirports()" class="ml-2 font-bold underline">Try again</button>
+        </p>
+      }
+      @if (flightError()) {
+        <p class="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700" role="alert">{{ flightError() }}</p>
+      }
+      @if (flightValidationError()) {
+        <p class="mb-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-800" role="alert">
+          {{ flightValidationError() }}
+        </p>
+      }
+      @if (flightSuccess()) {
+        <p class="mb-4 rounded-lg bg-green-50 p-3 text-sm text-green-700" role="status">
+          {{ flightSuccess() }}
+        </p>
+        @if (lastCreatedFlight()) {
+          <button
+            type="button"
+            (click)="verifyFlightInSearch()"
+            class="mb-4 rounded-lg border border-green-700 px-4 py-2 text-sm font-semibold text-green-800 hover:bg-green-50"
+          >
+            Find this flight in search
+          </button>
+        }
+      }
+
+      <form #flightForm="ngForm" (ngSubmit)="addFlight(flightForm)" class="grid gap-4 sm:grid-cols-2">
+        <label class="admin-field">
+          <span>Flight number</span>
+          <input name="flightNum" ngModel required maxlength="20" placeholder="e.g. AI-852" />
+        </label>
+        <label class="admin-field">
+          <span>Airline code</span>
+          <input name="airlineCode" ngModel required maxlength="8" placeholder="e.g. AI" />
+        </label>
+        <label class="admin-field">
+          <span>Airline name</span>
+          <input name="airlineName" ngModel required maxlength="100" placeholder="e.g. Air India" />
+        </label>
+        <label class="admin-field">
+          <span>Ticket price</span>
+          <input name="price" ngModel required type="number" min="1" step="0.01" placeholder="e.g. 5400" />
+        </label>
+        <label class="admin-field">
+          <span>Origin</span>
+          <select name="sourceAirportCode" ngModel required [disabled]="isAirportsLoading() || !airports().length">
+            <option value="" disabled>Select origin</option>
+            @for (airport of airports(); track airport.airportCode) {
+              <option [value]="airport.airportCode">{{ airport.city }} ({{ airport.airportCode }})</option>
+            }
+          </select>
+        </label>
+        <label class="admin-field">
+          <span>Destination</span>
+          <select name="destAirportCode" ngModel required [disabled]="isAirportsLoading() || !airports().length">
+            <option value="" disabled>Select destination</option>
+            @for (airport of airports(); track airport.airportCode) {
+              <option [value]="airport.airportCode">{{ airport.city }} ({{ airport.airportCode }})</option>
+            }
+          </select>
+        </label>
+        <label class="admin-field">
+          <span>Departure</span>
+          <input name="departureTime" ngModel required type="datetime-local" />
+        </label>
+        <label class="admin-field">
+          <span>Arrival</span>
+          <input name="arrivalTime" ngModel required type="datetime-local" />
+        </label>
+
+        <div class="sm:col-span-2">
+          <button
+            type="submit"
+            [disabled]="isAddingFlight() || isAirportsLoading() || !airports().length"
+            class="rounded-xl bg-blue-600 px-6 py-3 font-bold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {{ isAddingFlight() ? 'Adding flight...' : 'Add flight' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>

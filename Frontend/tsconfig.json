@@ -1,0 +1,49 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve",
+    "paths": {
+      "@spartan-ng/helm/button": ["./shared/button/src/index.ts"],
+      "@spartan-ng/helm/utils": ["./shared/utils/src/index.ts"],
+      "@spartan-ng/helm/avatar": ["./shared/avatar/src/index.ts"],
+      "@spartan-ng/helm/dropdown-menu": ["./shared/dropdown-menu/src/index.ts"],
+      "@spartan-ng/helm/input": ["./shared/input/src/index.ts"],
+      "@spartan-ng/helm/textarea": ["./shared/textarea/src/index.ts"],
+      "@spartan-ng/helm/label": ["./shared/label/src/index.ts"],
+      "@spartan-ng/helm/separator": ["./shared/separator/src/index.ts"],
+      "@spartan-ng/helm/spinner": ["./shared/spinner/src/index.ts"],
+      "@spartan-ng/helm/select": ["./shared/select/src/index.ts"],
+      "@spartan-ng/helm/dialog": ["./shared/dialog/src/index.ts"],
+      "@spartan-ng/helm/sonner": ["./shared/sonner/src/index.ts"],
+      "@spartan-ng/helm/input-otp": ["./shared/input-otp/src/index.ts"],
+      "@spartan-ng/helm/skeleton": ["./shared/skeleton/src/index.ts"],
+      "@spartan-ng/helm/input-group": ["./shared/input-group/src/index.ts"],
+      "@spartan-ng/helm/field": ["./shared/field/src/index.ts"],
+      "@spartan-ng/helm/popover": ["./shared/popover/src/index.ts"],
+      "@spartan-ng/helm/radio-group": ["./shared/radio-group/src/index.ts"]
+    }
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

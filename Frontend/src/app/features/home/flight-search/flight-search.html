@@ -1,0 +1,82 @@
+<div class="relative w-screen min-h-150 h-auto pb-16 lg:pb-8">
+  <!-- Background Image (Hidden on mobile, visible on desktop) -->
+  <img
+    src="/assets/bg1.png"
+    alt="Background"
+    class="absolute inset-0 w-full h-full object-cover object-center hidden md:block"
+  />
+
+  <!-- Solid blue background on mobile (below md), semi-transparent dark overlay on desktop -->
+  <div class="absolute inset-0 bg-blue-950 md:bg-black/45"></div>
+
+  <div class="relative max-w-6xl mx-auto px-4 pt-16 md:pt-24 lg:pt-32 pb-16 md:pb-8 lg:pb-16">
+    <!-- MAIN SEARCH CARD -->
+    <div
+      class="relative bg-white rounded-xl shadow-2xl pt-6 pb-12 lg:pb-8 px-4 sm:px-6 lg:px-5 mt-6"
+      (click)="$event.stopPropagation()"
+    >
+      <div
+        class="flex flex-col lg:flex-row border border-slate-300 rounded-2xl mt-4 sm:mt-6 divide-y lg:divide-y-0 lg:divide-x divide-slate-300 relative"
+      >
+        <!-- FROM / TO BLOCK -->
+        <div
+          class="w-full lg:w-100 grid grid-cols-1 sm:grid-cols-2 border-b lg:border-b-0 lg:border-r border-slate-300 divide-y sm:divide-y-0 sm:divide-x divide-slate-300 relative"
+        >
+          <!-- FROM -->
+          <city-popover
+            [city]="fromCity()!"
+            label="FROM"
+            (cityChange)="onFromCityChange($event)"
+            class="w-full sm:pr-1 hover:bg-blue-100/70 transition-colors duration-75 cursor-pointer"
+          />
+
+          <!-- SWAP BUTTON -->
+          <button
+            type="button"
+            (click)="swapCities()"
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 hidden sm:flex w-8 h-8 bg-white border rounded-full shadow-md border-slate-200 items-center justify-center text-blue-600 hover:bg-slate-100 cursor-pointer"
+            aria-label="Swap departure and destination"
+          >
+            <ng-icon name="lucideArrowLeftRight" size="14" />
+          </button>
+
+          <!-- TO -->
+          <city-popover
+            [city]="toCity()!"
+            label="TO"
+            (cityChange)="onToCityChange($event)"
+            class="w-full sm:pl-2 hover:bg-blue-100/70 transition-colors duration-75 cursor-pointer"
+          />
+        </div>
+
+        <!-- DEPARTURE DATE -->
+        <depature-date-picker
+          class="w-full flex-1 hover:bg-blue-100/70 transition-colors duration-75 px-4 cursor-pointer"
+        />
+
+        <!-- TRAVELLERS -->
+        <app-travellers
+          class="w-full flex-1 hover:bg-blue-100/70 transition-colors duration-75 px-4 cursor-pointer"
+        />
+
+        <!-- CABIN CLASS -->
+        <app-cabin-class-popover
+          class="w-full lg:w-48 hover:bg-blue-100/70 transition-colors duration-75 cursor-pointer"
+        />
+      </div>
+
+      <!-- SEARCH BUTTON -->
+      <div
+        class="absolute -bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center justify-center whitespace-nowrap"
+      >
+        <button
+          type="button"
+          (click)="onSearch()"
+          class="bg-linear-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-black text-lg sm:text-xl px-10 sm:px-16 py-2.5 sm:py-3 rounded-full shadow-xl tracking-wider cursor-pointer transition-all transform hover:scale-105"
+        >
+          SEARCH
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

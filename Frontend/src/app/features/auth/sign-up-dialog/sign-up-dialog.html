@@ -1,0 +1,229 @@
+<!-- Modal Backdrop -->
+<div
+  class="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-xs"
+  (click)="closeSignupModel()"
+>
+  <!-- Modal Content Card -->
+  <div
+    (click)="$event.stopPropagation()"
+    class="relative flex w-[95vw] sm:w-full max-w-md flex-col rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xl max-h-[92vh] overflow-y-auto"
+  >
+    <!-- Close Button -->
+    <button
+      type="button"
+      (click)="closeSignupModel()"
+      class="absolute right-3 top-3 sm:right-4 sm:top-4 rounded-sm text-muted-foreground transition-opacity hover:text-foreground focus:outline-none"
+    >
+      <ng-icon name="lucideX" size="20" class="cursor-pointer sm:size-5.75" />
+    </button>
+
+    <!-- Logo -->
+    <div class="mb-1 sm:mb-2 flex justify-center">
+      <img src="/assets/logo1.png" alt="Make my trip" class="h-9 sm:h-12 object-contain" />
+    </div>
+
+    <div class="flex flex-col gap-3 sm:gap-4 mt-1 sm:mt-2">
+      <!-- Signup Form -->
+      <form [formRoot]="form" class="flex flex-col gap-2.5 sm:gap-3">
+        <!-- First Name & Last Name Group (Stacks on Mobile) -->
+        <hlm-field-group class="flex flex-col sm:grid sm:grid-cols-2 gap-2.5 sm:gap-3">
+          <hlm-field class="w-full">
+            <label hlmFieldLabel for="form-firstName" class="text-xs sm:text-sm">First Name</label>
+            <hlm-input-group class="h-9 sm:h-10!">
+              <input
+                hlmInputGroupInput
+                type="text"
+                placeholder="King"
+                id="form-firstName"
+                [formField]="form.firstName"
+                class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+              />
+            </hlm-input-group>
+            <p class="text-[11px] sm:text-xs text-destructive">
+              @if (form.firstName().invalid() && form.firstName().touched()) {
+                {{ form.firstName().errors()[0]?.message }}
+              }
+            </p>
+          </hlm-field>
+
+          <hlm-field class="w-full">
+            <label hlmFieldLabel for="form-lastName" class="text-xs sm:text-sm">Last Name</label>
+            <hlm-input-group class="h-9 sm:h-10!">
+              <input
+                hlmInputGroupInput
+                type="text"
+                placeholder="Leonidas"
+                id="form-lastName"
+                [formField]="form.lastName"
+                class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+              />
+            </hlm-input-group>
+            <p class="text-[11px] sm:text-xs text-destructive">
+              @if (form.lastName().invalid() && form.lastName().touched()) {
+                {{ form.lastName().errors()[0]?.message }}
+              }
+            </p>
+          </hlm-field>
+        </hlm-field-group>
+
+        <!-- Email Field -->
+        <hlm-field class="w-full">
+          <label hlmFieldLabel for="form-email" class="text-xs sm:text-sm">Email</label>
+          <hlm-input-group class="h-9 sm:h-10!">
+            <input
+              hlmInputGroupInput
+              type="email"
+              placeholder="Enter your email"
+              id="form-email"
+              [formField]="form.email"
+              class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+            />
+          </hlm-input-group>
+          <p class="text-[11px] sm:text-xs text-destructive">
+            @if (form.email().invalid() && form.email().touched()) {
+              {{ form.email().errors()[0]?.message }}
+            }
+          </p>
+        </hlm-field>
+
+        <!-- Country Code & Mobile Number Group (Side-by-side on sm+, Stacked/Flexible on Mobile) -->
+        <hlm-field-group class="grid grid-cols-[95px_1fr] sm:grid-cols-[110px_1fr] gap-2 sm:gap-3">
+          <hlm-field class="w-full">
+            <label hlmFieldLabel for="form-countryCode" class="text-xs sm:text-sm">Code</label>
+            <hlm-select [formField]="form.countryCode" [itemToString]="itemToString" class="w-full">
+              <hlm-select-trigger class="h-9 sm:h-10! w-full text-xs">
+                <hlm-select-value />
+              </hlm-select-trigger>
+              <hlm-select-content *hlmSelectPortal class="z-1050">
+                <hlm-select-group>
+                  @for (country of countryCodes; track country.code) {
+                    <hlm-select-item [value]="country.code" class="text-xs">
+                      <span>{{ country.flag }}</span>
+                      <span class="pl-1.5 sm:pl-2">{{ country.code }}</span>
+                    </hlm-select-item>
+                  }
+                </hlm-select-group>
+              </hlm-select-content>
+            </hlm-select>
+          </hlm-field>
+
+          <hlm-field class="w-full">
+            <label hlmFieldLabel for="form-mobile" class="text-xs sm:text-sm">Mobile Number</label>
+            <hlm-input-group class="h-9 sm:h-10!">
+              <input
+                hlmInputGroupInput
+                type="tel"
+                placeholder="98765 43210"
+                id="form-mobile"
+                [formField]="form.mobile"
+                class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+              />
+            </hlm-input-group>
+            <p class="text-[11px] sm:text-xs text-destructive">
+              @if (form.mobile().invalid() && form.mobile().touched()) {
+                {{ form.mobile().errors()[0]?.message }}
+              }
+            </p>
+          </hlm-field>
+        </hlm-field-group>
+
+        <!-- Password Field -->
+        <hlm-field class="w-full">
+          <label hlmFieldLabel for="form-password" class="text-xs sm:text-sm">Password</label>
+          <hlm-input-group class="h-9 sm:h-10!">
+            <input
+              hlmInputGroupInput
+              [type]="showPassword() ? 'text' : 'password'"
+              placeholder="Create password"
+              id="form-password"
+              [formField]="form.password"
+              class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+            />
+            <hlm-input-group-addon
+              align="inline-end"
+              class="cursor-pointer px-2"
+              (click)="toggleShowPassword()"
+            >
+              <ng-icon
+                [name]="showPassword() ? 'lucideEyeOff' : 'lucideEye'"
+                size="16"
+                class="sm:size-4.5"
+              />
+            </hlm-input-group-addon>
+          </hlm-input-group>
+          <p class="text-[11px] sm:text-xs text-destructive">
+            @if (form.password().invalid() && form.password().touched()) {
+              {{ form.password().errors()[0]?.message }}
+            }
+          </p>
+        </hlm-field>
+
+        <!-- Confirm Password Field -->
+        <hlm-field class="w-full">
+          <label hlmFieldLabel for="form-confirmPassword" class="text-xs sm:text-sm"
+            >Confirm Password</label
+          >
+          <hlm-input-group class="h-9 sm:h-10!">
+            <input
+              hlmInputGroupInput
+              [type]="showConfirmPassword() ? 'text' : 'password'"
+              placeholder="Confirm password"
+              id="form-confirmPassword"
+              [formField]="form.confirmPassword"
+              class="placeholder:text-xs sm:placeholder:text-sm text-xs sm:text-sm"
+            />
+            <hlm-input-group-addon
+              align="inline-end"
+              class="cursor-pointer px-2"
+              (click)="toggleShowConfirmPassword()"
+            >
+              <ng-icon
+                [name]="showConfirmPassword() ? 'lucideEyeOff' : 'lucideEye'"
+                size="16"
+                class="sm:size-4.5"
+              />
+            </hlm-input-group-addon>
+          </hlm-input-group>
+          <p class="text-[11px] sm:text-xs text-destructive">
+            @if (form.confirmPassword().invalid() && form.confirmPassword().touched()) {
+              {{ form.confirmPassword().errors()[0]?.message }}
+            }
+          </p>
+        </hlm-field>
+        @if (errorMessage()) {
+          <p class="text-[11px] sm:text-xs text-destructive min-h-4">
+            Error : {{ errorMessage() }}
+          </p>
+        }
+        @if (isSubmitting()) {
+          <button hlmBtn size="lg" disabled class="mt-1 sm:mt-2 w-full text-xs sm:text-sm">
+            <hlm-spinner data-icon="inline-start" />
+            Submitting...
+          </button>
+        } @else {
+          <button
+            hlmBtn
+            size="lg"
+            type="submit"
+            [disabled]="form.email().errors().length > 0 || form.password().errors().length > 0"
+            class="mt-1 sm:mt-2 w-full text-xs sm:text-sm disabled:opacity-70 disabled:cursor-not-allowed"
+          >
+            Create Account
+          </button>
+        }
+      </form>
+
+      <div>
+        <p hlmFieldDescription class="text-center text-xs sm:text-sm">
+          Already have an account?
+          <a
+            (click)="onLoginClicked()"
+            class="font-medium underline underline-offset-4 hover:text-primary cursor-pointer"
+          >
+            Log in
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

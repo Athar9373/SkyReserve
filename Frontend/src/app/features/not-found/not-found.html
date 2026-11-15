@@ -1,0 +1,36 @@
+<div class="min-h-screen flex flex-col justify-between bg-white text-slate-800 font-sans">
+  <!-- Main Content Area -->
+  <main class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 text-center my-8">
+    <!-- Message Section -->
+    <div class="max-w-md w-full space-y-3 sm:space-y-4 mb-6 sm:mb-10">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight">
+        Page not found
+      </h1>
+      <p class="text-xs sm:text-sm md:text-base text-slate-600 font-normal leading-relaxed">
+        With MakeMyTrip you can go anywhere. But first you need to go back to the homepage.
+      </p>
+
+      <!-- Action Button -->
+      <div class="pt-2">
+        <button
+          type="button"
+          (click)="goBack()"
+          class="inline-flex items-center justify-center px-8 py-3 bg-[#001f3f] hover:bg-[#001328] active:scale-95 text-white font-bold text-sm rounded-lg shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#001f3f]"
+        >
+          Go back
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Illustration -->
+    <div
+      class="w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl flex justify-center items-center"
+    >
+      <img
+        [src]="imageUrl"
+        alt="Beach Hammock Illustration"
+        class="w-full h-auto object-contain max-h-[320px] sm:max-h-[380px] md:max-h-[420px]"
+      />
+    </div>
+  </main>
+</div>
